@@ -1,0 +1,14 @@
+---
+- block:
+
+  - name: Setting up interfaces file.
+    template:
+      src: 'interfaces.j2'
+      dest: "files/{{MAC}}/interfaces"
+      backup: yes
+      force: yes
+    register: result
+
+  tags:
+    - interfaces
+  ignore_errors: yes

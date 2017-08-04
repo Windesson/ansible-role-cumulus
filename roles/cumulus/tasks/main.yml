@@ -1,0 +1,22 @@
+---
+
+- block:
+
+    - name: Creating local repo.
+      file:
+       path: "files/{{MAC}}"
+       state: directory
+       mode: 0755
+
+    - name: Fetch interfaces tasks
+      include: services/interfaces.yml
+
+    - name: Fetch routing task
+      include: services/quagga.yml
+
+  when:
+    - ansible_connection == "local"
+  tags:
+    - cumulus
+  rescue:
+    - debug: msg='I caught an error. Make sure all required variables are defined!'

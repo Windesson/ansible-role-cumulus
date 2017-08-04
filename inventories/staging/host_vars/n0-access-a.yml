@@ -1,0 +1,45 @@
+---
+device_asset: A111
+device_serial: A111
+device_location: Panama
+device_hostname: n0-access-a
+internally_managed_device: yes
+
+vlans:
+  - vlan: 499
+    name: mgmt
+  - vlan: 200
+    name: voice
+  - vlan: 100
+    name: data
+  - vlan: 1000
+    name: native
+
+mgmt_interface:
+  description: vrf mgmt network
+  ipv4: 192.168.100.10/24
+  gateway: 192.168.100.1
+  mac: 8c:ea:1b:20:cb:c0
+
+portchannel_interfaces:
+  - portchannel: 0
+    interface: swp49-50
+    description: Bond0 Uplink
+
+vlan_interfaces:
+  - vlan: 499
+    description: Network Management
+    ipv4: 192.168.9.100/24
+    gateway: 192.168.9.1
+
+access_interfaces:
+ - interface: swp1-40
+   description: Network DATA AND VOICE
+
+ - interface: swp41-43,swp44
+   description: Network DATA-ONLY
+   vlans: 100,300
+
+ - interface: swp45-46,swp47,swp48
+   description: Network VOICE-ONLY
+   vlans: 200

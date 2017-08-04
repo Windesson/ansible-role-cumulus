@@ -1,0 +1,153 @@
+2017-08-04 11:14:45,778 p=24842 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:14:45,867 p=24842 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:14:46,765 p=24842 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:14:46,767 p=24842 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:14:46,771 p=24842 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:14:47,233 p=24842 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": false, "failed": true, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE"}
+2017-08-04 11:14:47,234 p=24842 u=ansible |  fatal: [n0-access-a]: FAILED! => {"changed": false, "failed": true, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE"}
+2017-08-04 11:14:47,237 p=24842 u=ansible |  TASK [cumulus : debug] *********************************************************
+2017-08-04 11:14:47,353 p=24842 u=ansible |  ok: [n0-dist-a] => {
+    "msg": "I caught an error. Make sure all required variables are defined!"
+}
+2017-08-04 11:14:47,355 p=24842 u=ansible |  ok: [n0-access-a] => {
+    "msg": "I caught an error. Make sure all required variables are defined!"
+}
+2017-08-04 11:14:47,357 p=24842 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:14:47,357 p=24842 u=ansible |  n0-access-a                : ok=2    changed=0    unreachable=0    failed=0   
+2017-08-04 11:14:47,358 p=24842 u=ansible |  n0-dist-a                  : ok=2    changed=0    unreachable=0    failed=0   
+2017-08-04 11:17:47,530 p=24979 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:17:47,559 p=24979 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:17:48,257 p=24979 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:17:48,259 p=24979 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:17:48,262 p=24979 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:17:48,609 p=24979 u=ansible |  changed: [n0-dist-a]
+2017-08-04 11:17:48,610 p=24979 u=ansible |  changed: [n0-access-a]
+2017-08-04 11:17:48,688 p=24979 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:17:49,401 p=24979 u=ansible |  fatal: [n0-access-a]: FAILED! => {"changed": true, "failed": true, "msg": "Destination directory 8C-EA-1B-20-CB-C0 does not exist"}
+2017-08-04 11:17:49,402 p=24979 u=ansible |  ...ignoring
+2017-08-04 11:17:49,404 p=24979 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": true, "failed": true, "msg": "Destination directory 48-0F-CF-AF-68-B4 does not exist"}
+2017-08-04 11:17:49,405 p=24979 u=ansible |  ...ignoring
+2017-08-04 11:17:49,406 p=24979 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:17:49,507 p=24979 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:17:49,587 p=24979 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": false, "failed": true, "msg": "AnsibleUndefinedVariable: 'management' is undefined"}
+2017-08-04 11:17:49,587 p=24979 u=ansible |  ...ignoring
+2017-08-04 11:17:49,593 p=24979 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:17:49,594 p=24979 u=ansible |  n0-access-a                : ok=3    changed=1    unreachable=0    failed=0   
+2017-08-04 11:17:49,594 p=24979 u=ansible |  n0-dist-a                  : ok=4    changed=1    unreachable=0    failed=0   
+2017-08-04 11:18:49,728 p=25177 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:18:49,756 p=25177 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:18:50,444 p=25177 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:18:50,444 p=25177 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:18:50,446 p=25177 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:18:50,787 p=25177 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:18:50,788 p=25177 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:18:50,790 p=25177 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:18:51,489 p=25177 u=ansible |  fatal: [n0-access-a]: FAILED! => {"changed": true, "failed": true, "msg": "Destination directory 8C-EA-1B-20-CB-C0 does not exist"}
+2017-08-04 11:18:51,490 p=25177 u=ansible |  ...ignoring
+2017-08-04 11:18:51,491 p=25177 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": true, "failed": true, "msg": "Destination directory 48-0F-CF-AF-68-B4 does not exist"}
+2017-08-04 11:18:51,491 p=25177 u=ansible |  ...ignoring
+2017-08-04 11:18:51,493 p=25177 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:18:51,595 p=25177 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:18:51,669 p=25177 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": false, "failed": true, "msg": "AnsibleUndefinedVariable: 'management' is undefined"}
+2017-08-04 11:18:51,669 p=25177 u=ansible |  ...ignoring
+2017-08-04 11:18:51,673 p=25177 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:18:51,673 p=25177 u=ansible |  n0-access-a                : ok=3    changed=0    unreachable=0    failed=0   
+2017-08-04 11:18:51,674 p=25177 u=ansible |  n0-dist-a                  : ok=4    changed=0    unreachable=0    failed=0   
+2017-08-04 11:20:37,677 p=25382 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:20:37,700 p=25382 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:20:38,355 p=25382 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:20:38,357 p=25382 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:20:38,359 p=25382 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:20:38,712 p=25382 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:20:38,713 p=25382 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:20:38,715 p=25382 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:20:39,436 p=25382 u=ansible |  changed: [n0-access-a]
+2017-08-04 11:20:39,437 p=25382 u=ansible |  changed: [n0-dist-a]
+2017-08-04 11:20:39,439 p=25382 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:20:39,546 p=25382 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:20:39,615 p=25382 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": false, "failed": true, "msg": "AnsibleUndefinedVariable: 'management' is undefined"}
+2017-08-04 11:20:39,616 p=25382 u=ansible |  ...ignoring
+2017-08-04 11:20:39,623 p=25382 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:20:39,623 p=25382 u=ansible |  n0-access-a                : ok=3    changed=1    unreachable=0    failed=0   
+2017-08-04 11:20:39,623 p=25382 u=ansible |  n0-dist-a                  : ok=4    changed=1    unreachable=0    failed=0   
+2017-08-04 11:27:06,092 p=25609 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:27:06,120 p=25609 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:27:06,809 p=25609 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:27:06,811 p=25609 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:27:06,813 p=25609 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:27:07,158 p=25609 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:27:07,159 p=25609 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:27:07,161 p=25609 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:27:07,790 p=25609 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:27:07,792 p=25609 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:27:07,793 p=25609 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:27:07,900 p=25609 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:27:08,218 p=25609 u=ansible |  fatal: [n0-dist-a]: FAILED! => {"changed": true, "failed": true, "gid": 1000, "group": "ansible", "mode": "0664", "msg": "chown failed: failed to look up user quagga", "owner": "ansible", "path": "files/48-0F-CF-AF-68-B4/quagga", "size": 929, "state": "file", "uid": 1000}
+2017-08-04 11:27:08,221 p=25609 u=ansible |  ...ignoring
+2017-08-04 11:27:08,224 p=25609 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:27:08,224 p=25609 u=ansible |  n0-access-a                : ok=3    changed=0    unreachable=0    failed=0   
+2017-08-04 11:27:08,224 p=25609 u=ansible |  n0-dist-a                  : ok=4    changed=0    unreachable=0    failed=0   
+2017-08-04 11:27:58,604 p=25834 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:27:58,629 p=25834 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:27:59,279 p=25834 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:27:59,281 p=25834 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:27:59,282 p=25834 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:27:59,637 p=25834 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:27:59,638 p=25834 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:27:59,640 p=25834 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:28:00,286 p=25834 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:28:00,288 p=25834 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:28:00,290 p=25834 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:28:00,392 p=25834 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:28:00,632 p=25834 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:28:00,634 p=25834 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:28:00,634 p=25834 u=ansible |  n0-access-a                : ok=3    changed=0    unreachable=0    failed=0   
+2017-08-04 11:28:00,635 p=25834 u=ansible |  n0-dist-a                  : ok=4    changed=0    unreachable=0    failed=0   
+2017-08-04 11:30:36,362 p=26068 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:30:36,383 p=26068 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:30:37,042 p=26068 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:30:37,045 p=26068 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:30:37,047 p=26068 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:30:37,382 p=26068 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:30:37,383 p=26068 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:30:37,384 p=26068 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:30:38,029 p=26068 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:30:38,181 p=26068 u=ansible |  changed: [n0-access-a]
+2017-08-04 11:30:38,185 p=26068 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:30:38,297 p=26068 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:30:38,536 p=26068 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:30:38,538 p=26068 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:30:38,538 p=26068 u=ansible |  n0-access-a                : ok=3    changed=1    unreachable=0    failed=0   
+2017-08-04 11:30:38,538 p=26068 u=ansible |  n0-dist-a                  : ok=4    changed=0    unreachable=0    failed=0   
+2017-08-04 11:34:21,913 p=26317 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:34:21,934 p=26317 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:34:22,590 p=26317 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:34:22,595 p=26317 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:34:22,597 p=26317 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:34:22,932 p=26317 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:34:22,934 p=26317 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:34:22,936 p=26317 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:34:23,586 p=26317 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:34:23,736 p=26317 u=ansible |  changed: [n0-access-a]
+2017-08-04 11:34:23,738 p=26317 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:34:23,862 p=26317 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:34:24,131 p=26317 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:34:24,133 p=26317 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:34:24,133 p=26317 u=ansible |  n0-access-a                : ok=3    changed=1    unreachable=0    failed=0   
+2017-08-04 11:34:24,133 p=26317 u=ansible |  n0-dist-a                  : ok=4    changed=0    unreachable=0    failed=0   
+2017-08-04 11:35:02,330 p=26542 u=ansible |  PLAY [Provision Cumulus Demo] **************************************************
+2017-08-04 11:35:02,353 p=26542 u=ansible |  TASK [setup] *******************************************************************
+2017-08-04 11:35:03,000 p=26542 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:35:03,001 p=26542 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:35:03,003 p=26542 u=ansible |  TASK [cumulus : Creating local repo.] ******************************************
+2017-08-04 11:35:03,343 p=26542 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:35:03,344 p=26542 u=ansible |  ok: [n0-access-a]
+2017-08-04 11:35:03,346 p=26542 u=ansible |  TASK [cumulus : Setting up interfaces file.] ***********************************
+2017-08-04 11:35:03,982 p=26542 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:35:04,113 p=26542 u=ansible |  changed: [n0-access-a]
+2017-08-04 11:35:04,118 p=26542 u=ansible |  TASK [cumulus : Setup quagga routing rules.] ***********************************
+2017-08-04 11:35:04,238 p=26542 u=ansible |  skipping: [n0-access-a]
+2017-08-04 11:35:04,495 p=26542 u=ansible |  ok: [n0-dist-a]
+2017-08-04 11:35:04,497 p=26542 u=ansible |  PLAY RECAP *********************************************************************
+2017-08-04 11:35:04,498 p=26542 u=ansible |  n0-access-a                : ok=3    changed=1    unreachable=0    failed=0   
+2017-08-04 11:35:04,498 p=26542 u=ansible |  n0-dist-a                  : ok=4    changed=0    unreachable=0    failed=0   

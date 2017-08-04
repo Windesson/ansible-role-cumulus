@@ -1,0 +1,65 @@
+!
+hostname n0-dist-a
+service integrated-vtysh-config
+!
+interface eth0
+ ipv6 nd suppress-ra
+ link-detect
+!
+!
+interface lo
+ link-detect
+  ip ospf 1 area 0
+!
+!
+interface swp47
+ ip pim sm
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ link-detect
+!
+interface swp48
+ ip pim sm
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ link-detect
+!
+!
+interface bridge.300
+ ip pim sm
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ link-detect
+!
+interface bridge.499
+ ip pim sm
+ ip ospf 1 area 0
+ link-detect
+!
+interface bridge.200
+ ip pim sm
+ ip ospf 1 area 0
+ link-detect
+!
+interface bridge.100
+ ip pim sm
+ ip ospf 1 area 0
+ link-detect
+!
+!
+router ospf 1
+  ospf router-id 192.168.10.1
+  log-adjacency-changes
+  auto-cost reference-bandwidth 1000000
+  passive-interface default
+  no passive-interface swp47
+  no passive-interface swp48
+  no passive-interface bridge.300
+!
+!
+!
+!
+ip multicast-routing
+!
+ip pim rp 10.0.0.1 224.0.0.0/4
+!

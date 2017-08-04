@@ -1,0 +1,102 @@
+---
+device_asset: A222
+device_serial: A222
+device_location: Panama
+device_hostname: n0-dist-a
+internally_managed_device: yes
+redundancy_priority: 1
+
+vlans:
+  - vlan: 499
+    name: mgmt
+  - vlan: 200
+    name: voice
+  - vlan: 100
+    name: data
+  - vlan: 1000
+    name: native
+  - vlan: 300
+    name: cross-link-to-dist-b
+
+mgmt_interface:
+  description: vrf mgmt network
+  ipv4: 192.168.100.20/24
+  gateway: 192.168.100.1
+  mac: 48:0f:cf:af:68:b4
+
+peer_interfaces:
+  - interface: swp47
+    description: uplink to AT&T
+    ipv4: 192.168.7.1/30
+    ospfv2: 1 area 0
+    speed: 1000
+    duplex: full
+
+  - interface: swp48
+    description: uplink to AT&T	
+    ipv4: 192.168.8.1/30
+    ospfv2: 1 area 0
+    speed: 1000
+    duplex: full
+
+loopback_interfaces:
+   - loopback: 0
+     ipv4: 192.168.10.1/32
+     ospfv2: 1 area 0
+
+vlan_interfaces:
+  - vlan: 300
+    description: cross-link to n0-dist-b
+    ipv4: 192.168.3.1/30
+    ospfv2: 1 area 0
+
+  - vlan: 499
+    description: Network-Management
+    ipv4: 192.168.9.200/24
+    address_virtual:
+       mac: 00:00:5e:00:01:01
+       ipv4: 192.168.9.1/24
+    ospfv2: 1 area 0
+
+  - vlan: 200
+    description: Network-Voice
+    ipv4: 192.168.2.100/24
+    address_virtual:
+       mac: 00:00:5e:00:01:02
+       ipv4: 192.168.2.1/24
+    ospfv2: 1 area 0
+
+  - vlan: 100
+    description: Network-Data
+    ipv4: 192.168.1.100/24
+    address_virtual:
+       mac: 00:00:5e:00:01:03
+       ipv4: 192.168.1.1/24
+    ospfv2: 1 area 0
+
+
+portchannel_interfaces:
+  - portchannel: 1
+    description: Downlink to n0-access-a, swp49
+    interface: swp1
+    clag_id: 1
+
+  - portchannel: 2
+    description: Downlink to n0-access-b, swp50
+    interface: swp2
+    clag_id: 2
+
+  - portchannel: 3
+    interface: swp7-8
+    description: cross-link to n0-dist-c
+    mlag_crosslink: true
+    clagd_backup_ip: 172.28.17.3
+
+router:
+   ospfv2:
+      - pid: 1
+        rid: 192.168.10.1
+        no_passives:
+           - swp47
+           - swp48
+           - vlan300

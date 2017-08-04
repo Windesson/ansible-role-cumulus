@@ -1,0 +1,132 @@
+{% block body %}
+!
+hostname {{device_hostname}}
+service integrated-vtysh-config
+!
+interface eth0
+ ipv6 nd suppress-ra
+ link-detect
+!
+!
+{% for item in loopback_interfaces%}
+{% if item.loopback == 0%}
+interface lo
+{% else %}
+interface lo:{{item.loopback}}
+{% endif %}
+ link-detect
+{% if item.ospfv2 is defined %}
+  ip ospf {{item.ospfv2}}
+{% endif %}
+{% endfor %}
+!
+{# ------ create list of ospfv2 no passive interfaces ----#}
+{% set listOfNonPassives = [] %}
+{% if router.ospfv2 is defined %}
+{% for item in router.ospfv2 %}
+{% for interface in item.no_passives%}
+{%if listOfNonPassives.append(interface)%}{%endif%}
+{% endfor %}
+{% endfor %}
+{% endif%}
+!
+{# ------ configure ospfv2 ptp interfaces on the listOfNonPassives ------ #}
+{# ---- peers swps -----#}
+{% if peer_interfaces is defined %}
+{% for item in peer_interfaces %}
+interface {{item.interface}}
+ ip pim sm
+{% if item.interface in listOfNonPassives|list and item.ipv4|ipaddr('netmask') == '255.255.255.252'%}
+ ip ospf network point-to-point
+{% endif %}
+{% if item.ospfv2 is defined %}
+ ip ospf {{item.ospfv2}}
+{% endif %}
+ link-detect
+!
+{% endfor %}
+{% endif %}
+!
+{# ---- vlans -----#}
+{% if vlan_interfaces is defined %}
+{% for item in vlan_interfaces %}
+interface bridge.{{item.vlan}}
+ ip pim sm
+{% if 'vlan'~item.vlan in listOfNonPassives|list and item.ipv4|ipaddr('netmask') == '255.255.255.252'%}
+ ip ospf network point-to-point
+{% endif %}
+{% if item.ospfv2 is defined %}
+ ip ospf {{item.ospfv2}}
+{% endif %}
+ link-detect
+!
+{% endfor %}
+{% endif %}
+!
+{% if router is defined and router.ospfv2 is defined %}
+{% for item in router.ospfv2 %}
+router ospf {{item.pid}}
+  ospf router-id {{item.rid}}
+  log-adjacency-changes
+  auto-cost reference-bandwidth 1000000
+  passive-interface default
+{% for interface in item.no_passives%}
+  no passive-interface {{interface|lower()|replace('vlan','bridge.')}}
+{% endfor %}
+{% if item.raw is defined %}
+{% for line in item.raw.split('\n') %}
+  {{line}}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif%}
+!
+{# ---- START BGPv4 configuration ------------ #}
+!
+{% if router is defined and router.bgpv4 is defined %}
+{% for item in router.bgpv4 %}
+router bgp {{item.as}}
+    no synchronization
+    bgp log-neighbor-changes
+    no auto-summary
+{% if item.raw is defined %}
+{% for line in item.raw.split('\n')  %}
+    {{line}}
+{% endfor %}
+{% endif %}
+{% for net in item.networks %}
+    network {{net.split('/')[0]}} mask {{net|ipaddr('netmask')}}
+{% endfor %}
+{% if item.aggregate_address is defined %}
+{% for net in item.aggregate_address %}
+    aggregate-address {{net.split('/')[0]}} {{net|ipaddr('netmask')}}
+{% endfor %}
+{% endif %}
+{% for nb in item.neighbors %}
+    neighbor {{nb.ipv4}} remote-as {{nb.remote_as}}
+{% if nb.remote_as == item.as %}
+    neighbor {{nb.ipv4}} next-hop-self
+{% endif %}
+{% endfor %}
+{% if item.raw is defined %}
+{% for line in item.raw.split('\n') %}
+    {{line}}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+!
+{# ----- END BGPv4 configuration ------------- #}
+{% if router.raw is defined %}
+{% for line in router.raw.split('\n') %}
+{{line}}
+{% endfor %}
+{% endif %}
+!
+ip multicast-routing
+!
+{% if management.multicast_rp_ipv4 is defined %}
+ip pim rp {{management.multicast_rp_ipv4}} 224.0.0.0/4
+{%  endif %}
+!
+{% endblock %}

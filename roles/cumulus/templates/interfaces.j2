@@ -1,0 +1,317 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*.intf
+
+
+# The primary network interface
+auto eth0
+{% if mgmt_interface is defined %}
+iface eth0 inet static
+    vrf mgmt
+    address {{mgmt_interface.ipv4}}
+    gateway {{mgmt_interface.gateway}}
+{% if mgmt_interface.description is defined %}
+    alias {{mgmt_interface.description}}
+{% endif %}
+{% else %}
+iface eth0 inet dhcp
+    vrf mgmt
+{% endif %}
+
+auto mgmt
+iface mgmt
+    address 127.0.0.1/8
+    vrf-table auto
+
+{# --------Loopback interface ------------------------- #}
+{% if loopback_interfaces is defined %}
+# The loopback network interface
+{% for item in loopback_interfaces %}
+{% if item.loopback|int == 0 %}
+auto lo
+iface lo inet loopback
+  address {{item.ipv4}}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+{% else %}
+auto lo:{{item.loopback}}
+iface lo:{{item.loopback}} inet loopback
+  address {{item.ipv4}}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% else %}
+auto lo
+iface lo inet loopback
+{% endif %}
+
+{# -------- Peer interface ------------------------- #}
+{% if peer_interfaces is defined %}
+# The peers network interface
+{% for item in peer_interfaces %}
+auto {{item.interface}}
+iface {{item.interface}} inet static
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+  address   {{item.ipv4 | ipaddr('address')}}
+  netmask   {{item.ipv4 | ipaddr('netmask')}}
+{% if item.gateway is defined %}
+  gateway   {{item.gateway|ipaddr('address')}}
+{% endif %}
+{% if item.speed is defined %}
+  link-speed {{item.speed}}
+{% endif %}
+{% if item.duplex is defined %}
+  link-duplex {{item.duplex}}
+{% endif %}
+{% if item.raw is defined %}
+{% for line in item.raw.split('\n') %}
+  {{line}}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{# --------- vlan interface ---------------------------- #}
+{% if vlan_interfaces is defined %}
+# The vlan network interface
+{% for item in vlan_interfaces %}
+
+auto bridge.{{item.vlan}}
+{% if item.ipv4 is defined %}
+{#---- static ip--------#}
+{#iface vlan item.vlan#}
+iface bridge.{{item.vlan}}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+  address {{item.ipv4}}
+{% if item.address_virtual is defined %}
+  address-virtual {{item.address_virtual.mac}} {{item.address_virtual.ipv4}}
+{% endif %}
+{% if item.gateway is defined %}
+  gateway   {{item.gateway |ipaddr('address')}}
+{% endif %}
+{#---- end static ip--------#}
+{% else %}
+iface bridge.{{item.vlan}} inet dhcp
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+{% endif%}
+  {#vlan-id item.vlan#}
+  {#vlan-raw-device bridge#}
+{% endfor %}
+
+{% endif %}
+{# ---------variables ------------------------------------- #}
+{% set bridge_ports = [] %}
+{% set all_vlans = [] %}
+{% set voice_vlans = [] %}
+{% set data_vlans = [] %}
+{% set native_vlan = [] %}
+{# --- Start setting variables --- #}
+{% if vlans is defined %}
+{% for item in vlans %}
+{% if all_vlans.append(item.vlan)%}{% endif %}
+{% if item.name|lower() == 'data' %}
+{% if data_vlans.append(item.vlan) %}{% endif %}
+{% endif%}
+{% if item.name|lower() == 'voice' %}
+{% if voice_vlans.append(item.vlan) %}{% endif %}
+{% endif%}
+{% if item.name|lower() == 'native' %}
+{% if native_vlan.append(item.vlan) %}{% endif %}
+{% endif%}
+{% endfor%}
+{% endif%}
+{# --- end variables --- #}
+{# ----------- access interface -------------------------- #}
+{% if access_interfaces is defined and vlans is defined%}
+
+# The access network interface
+{% for item in access_interfaces %}
+{% set interfaces = item.interface|replace(',', ' ') %}
+{% set interfaces = interfaces.split() %}
+{% for interface in interfaces %}
+{% if 'swp' in interface and '-' in interface %}
+{% if bridge_ports.append(interface)%}{% endif %}
+{% set range = interface|replace('swp', '') %}
+{% set r_start = range.split('-')[0]|int  %}
+{% set r_end = range.split('-')[1]|int + 1 %}
+
+% for i in range({{r_start}}, {{r_end-1}}):
+auto swp${i}
+iface swp${i}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+  bridge-vids {{voice_vlans|join(' ')}}
+  bridge-pvid {{item.vlans|default(data_vlans|join(' '))}}
+  mstpctl-bpduguard yes
+  mstpctl-portadminedge yes
+% endfor
+
+{% elif 'swp' in interface and not ('-' in interface) %}
+{% if bridge_ports.append(interface)%}{% endif %}
+auto {{interface}}
+iface {{interface}}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+  bridge-vids {{voice_vlans|join(' ')}}
+  bridge-pvid {{item.vlans|default(data_vlans|join(' '))}}
+  mstpctl-bpduguard yes
+  mstpctl-portadminedge yes
+
+{% else %}
+# {{interface}} is not a valid format
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+{# ----------- Trunk interface -------------------------- #}
+{% if trunk_interfaces is defined %}
+# The trunk network interface
+{% for item in trunk_interfaces %}
+{% set interfaces = item.interface|replace(',', ' ') %}
+{% set interfaces = interfaces.split() %}
+{% for interface in interfaces %}
+{% if 'swp' in interface and '-' in interface %}
+{% if bridge_ports.append(interface)%}{% endif %}
+{% set range = interface|replace('swp', '') %}
+{% set r_start = range.split('-')[0]|int  %}
+{% set r_end = range.split('-')[1]|int + 1 %}
+
+% for i in range({{r_start}}, {{r_end-1}}):
+auto swp${i}
+iface swp${i}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+% endfor
+
+{% elif 'swp' in interface and not ('-' in interface) %}
+{% if bridge_ports.append(interface)%}{% endif %}
+auto {{interface}}
+iface {{interface}}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+
+{% else %}
+# {{interface}} is not a valid format
+
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{# ----------- Portchannel interfaces -------------------------- #}
+{% if portchannel_interfaces is defined %}
+{% set peerbond = [] %}
+# The portchannel network interface
+{% for item in portchannel_interfaces %}
+{% set pchannels = [] %}
+{% if 'swp' in item.interface and '-' in item.interface %}
+{% set r = item.interface|replace('swp', '') %}
+{% set x = r.split('-')[0]|int  %}
+{% set y = r.split('-')[1]|int + 1 %}
+{% for number in range(x,y) %}
+{% if pchannels.append('swp'~number)%}{% endif %}
+{% endfor %}
+{% elif ',' in item.interface %}
+{% set ports = item.interface.split(',')  %}
+{% for p in ports %}
+{% if pchannels.append(p)%}{% endif %}
+{% endfor %}
+{% else %}
+{% if pchannels.append(item.interface)%}{% endif %}
+{% endif %}
+{% if bridge_ports.append('bond'~item.portchannel)%}{% endif %}
+{% for p in pchannels %}
+auto {{p}}
+iface {{p}}
+{% if item.description is defined %}
+  alias {{item.description}}
+{% endif %}
+
+{% endfor %}
+auto bond{{item.portchannel}}
+iface bond{{item.portchannel}}
+   bond-slaves {{pchannels|join(' ')}}
+   bond-mode 802.3ad
+   bond-miimon 100
+   bond-use-carrier 1
+   bond-xmit-hash-policy layer3+4
+   bond-lacp-rate 1
+   bond-min-links 1
+{% if router is defined and item.clag_id is defined %}
+   clag-id {{item.clag_id}}
+{% if redundancy_priority is defined and  redundancy_priority == 1 %}
+   clagd-priority 1024
+{% else %}
+   clagd-priority 2048
+{% endif %}
+{% endif %}
+{%if router is defined and item.mlag_crosslink is defined and peerbond.append('bond'~item.portchannel)%}{% endif %}
+
+{% if peerbond|length > 0 and peerbond[-1] is defined  %}
+{% if redundancy_priority is defined and  redundancy_priority == 1 %}
+# mlag cross-link
+auto {{peerbond[-1]}}.4094
+iface {{peerbond[-1]}}.4094
+ address 169.254.1.1/30
+ clagd-peer-ip 169.254.1.2
+ clagd-sys-mac 44:38:39:FF:40:94
+ clagd-backup-ip {{item.clagd_backup_ip}}
+{% else %}
+# mlag cross-link
+auto {{peerbond[-1]}}.4094
+ iface {{peerbond[-1]}}.4094
+ address 169.254.1.2/30
+ clagd-peer-ip 169.254.1.1
+ clagd-sys-mac 44:38:39:FF:40:94
+ clagd-backup-ip {{item.clagd_backup_ip}}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{# ------------ Bridge ------------------------ #}
+{% if bridge_ports|length > 0 and vlans is defined %}
+# The Bridge network interface
+auto bridge
+iface bridge
+   bridge_ageing 28800
+{% if not (router is defined) %}
+   bridge-mcsnoop 1
+{% endif %}
+   bridge-vlan-aware yes
+{% set bridge_interfaces = bridge_ports|join(' ')%}
+{% if '-' in bridge_interfaces %}
+{# ----- start glob code block ----- #}
+{% set inter_ranges = [] %}
+{% set inter_singles = [] %}
+{% set inter_list = bridge_interfaces.split(' ')%}
+{% for interface in inter_list %}
+{% if '-' in interface %}
+{% if inter_ranges.append(interface)%}{%endif%}
+{% else %}
+{% if inter_singles.append(interface)%}{%endif%}
+{% endif %}
+{% endfor %}
+   bridge-ports glob {{inter_ranges|join(' ')}} {{inter_singles|join(' ')}}
+{# ----- end glob code block ------- #}
+{% else %}
+   bridge-ports {{bridge_interfaces}}
+{% endif %}
+   bridge-vids {{all_vlans|join(' ')}}
+   bridge-pvid {{native_vlan|join(' ')}}
+   bridge-stp on
+{% endif %}

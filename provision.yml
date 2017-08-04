@@ -1,0 +1,12 @@
+---
+
+- name: Provision Cumulus Demo
+  hosts: all
+  connection: local
+
+  vars:
+    MAC: "{{mgmt_interface.mac|replace(':','-')|upper()}}"
+    iscumulus: True
+
+  roles:
+    - { role: cumulus, when: iscumulus }

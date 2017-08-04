@@ -1,0 +1,134 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*.intf
+
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+    vrf mgmt
+    address 192.168.100.20/24
+    gateway 192.168.100.1
+    alias vrf mgmt network
+
+auto mgmt
+iface mgmt
+    address 127.0.0.1/8
+    vrf-table auto
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+  address 192.168.10.1/32
+
+
+# The peers network interface
+auto swp47
+iface swp47 inet static
+  alias uplink to AT&T
+  address   192.168.7.1
+  netmask   255.255.255.252
+  link-speed 1000
+  link-duplex full
+auto swp48
+iface swp48 inet static
+  alias uplink to AT&T
+  address   192.168.8.1
+  netmask   255.255.255.252
+  link-speed 1000
+  link-duplex full
+# The vlan network interface
+
+auto bridge.300
+iface bridge.300
+  alias cross-link to n0-dist-b
+  address 192.168.3.1/30
+    
+auto bridge.499
+iface bridge.499
+  alias Network-Management
+  address 192.168.9.200/24
+  address-virtual 00:00:5e:00:01:01 192.168.9.1/24
+    
+auto bridge.200
+iface bridge.200
+  alias Network-Voice
+  address 192.168.2.100/24
+  address-virtual 00:00:5e:00:01:02 192.168.2.1/24
+    
+auto bridge.100
+iface bridge.100
+  alias Network-Data
+  address 192.168.1.100/24
+  address-virtual 00:00:5e:00:01:03 192.168.1.1/24
+    
+
+# The portchannel network interface
+auto swp1
+iface swp1
+  alias Downlink to n0-access-a, swp49
+
+auto bond1
+iface bond1
+   bond-slaves swp1
+   bond-mode 802.3ad
+   bond-miimon 100
+   bond-use-carrier 1
+   bond-xmit-hash-policy layer3+4
+   bond-lacp-rate 1
+   bond-min-links 1
+   clag-id 1
+   clagd-priority 1024
+
+auto swp2
+iface swp2
+  alias Downlink to n0-access-b, swp50
+
+auto bond2
+iface bond2
+   bond-slaves swp2
+   bond-mode 802.3ad
+   bond-miimon 100
+   bond-use-carrier 1
+   bond-xmit-hash-policy layer3+4
+   bond-lacp-rate 1
+   bond-min-links 1
+   clag-id 2
+   clagd-priority 1024
+
+auto swp7
+iface swp7
+  alias cross-link to n0-dist-c
+
+auto swp8
+iface swp8
+  alias cross-link to n0-dist-c
+
+auto bond3
+iface bond3
+   bond-slaves swp7 swp8
+   bond-mode 802.3ad
+   bond-miimon 100
+   bond-use-carrier 1
+   bond-xmit-hash-policy layer3+4
+   bond-lacp-rate 1
+   bond-min-links 1
+
+# mlag cross-link
+auto bond3.4094
+iface bond3.4094
+ address 169.254.1.1/30
+ clagd-peer-ip 169.254.1.2
+ clagd-sys-mac 44:38:39:FF:40:94
+ clagd-backup-ip 172.28.17.3
+
+# The Bridge network interface
+auto bridge
+iface bridge
+   bridge_ageing 28800
+   bridge-vlan-aware yes
+   bridge-ports bond1 bond2 bond3
+   bridge-vids 499 200 100 1000 300
+   bridge-pvid 1000
+   bridge-stp on

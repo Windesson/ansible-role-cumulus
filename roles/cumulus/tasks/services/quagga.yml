@@ -1,0 +1,14 @@
+---
+- block:
+  - name: Setup quagga routing rules.
+    template:
+      src: "quagga.j2"
+      dest:  "files/{{MAC}}/quagga"
+      mode:  0664
+      backup: yes
+    register: result_1
+
+  tags:
+    - quagga
+  ignore_errors: yes
+  when: router is defined
