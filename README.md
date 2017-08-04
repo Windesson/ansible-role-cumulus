@@ -1,3 +1,3 @@
-Cumulus Interface file
+Cumulus Open Network OS Demo
 =====================
-Playbook to create Cumulus Linux interface file. :)
+Playbook to create Cumulus Linux Quagga and Interface files.
