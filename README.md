@@ -1,9 +1,13 @@
-Cumulus OS - Configurator Demo
+Cumulus OS - Intent Based Configurator
 =====================
-Playbook to create Cumulus Linux Quagga and Interface files under files/<device-mac>/.
+This PlayBook will automatically configure interface and quagga file based on the YAML variables.
 
-To run it;
+To run it: 
+------------
+
+
 ansible-playbook provison.yml
 
-Check results;
+Check OUTPUT
+-------------
 cd /files
