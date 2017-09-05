@@ -1,12 +1,6 @@
 # Cumulus OS - Intent Based Configurator
 This PlayBook will automatically configure the LINUX Interface and Quagga file based on the YAML variables.
 
-Interface Syntax:
---------------
-    interface: swp45-46,swp47,swp48
-    interface: swp41-43,swp4
-    interface: swp1-40
-
 To run it: 
 ------------
 ansible-playbook provison.yml
@@ -16,6 +10,13 @@ Check ouput:
 cd /files
 
 # Playbook Configuration Syntax
+
+Interface Syntax.
+
+    interface: swp45-46,swp47,swp48
+    interface: swp41-43,swp4
+    interface: swp1-40
+
 
 Management Interface (YAML).
 
