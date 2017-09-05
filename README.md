@@ -3,9 +3,9 @@ This PlayBook will automatically configure the LINUX Interface and Quagga file b
 
 Interface Syntax:
 --------------
-interface: swp45-46,swp47,swp48
-interface: swp41-43,swp4
-interface: swp1-40
+    interface: swp45-46,swp47,swp48
+    interface: swp41-43,swp4
+    interface: swp1-40
 
 To run it: 
 ------------
