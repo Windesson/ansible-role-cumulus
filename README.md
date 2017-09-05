@@ -44,11 +44,11 @@ VLAN Interface (YAML).
 
 VLAN Interface (Output)
 
-    vlan_interfaces:
-      - vlan: 499
-        description: Network Management
-        ipv4: 192.168.9.100/24
-        gateway: 192.168.9.1
+    auto bridge.499
+    iface bridge.499
+      alias Network Management
+      address 192.168.9.100/24
+      gateway   192.168.9.1
       
 ACCESS Interface (YAML).
 
@@ -92,6 +92,113 @@ ACCESS Interface (Output)
       mstpctl-bpduguard yes
       mstpctl-portadminedge yes
 
+
+Router-Router Interface (YAML).
+
+    peer_interfaces:
+      - interface: swp47
+        description: uplink to AT&T
+        ipv4: 192.168.7.1/30
+        ospfv2: 1 area 0
+        speed: 1000
+        duplex: full
+
+      - interface: swp48
+        description: uplink to AT&T	
+        ipv4: 192.168.8.1/30
+        ospfv2: 1 area 0
+        speed: 1000
+        duplex: full
+
+Router-Router Interface (Ouput).
+
+    # The peers network interface
+    auto swp47
+    iface swp47 inet static
+      alias uplink to AT&T
+      address   192.168.7.1
+      netmask   255.255.255.252
+      link-speed 1000
+      link-duplex full
+    auto swp48
+    iface swp48 inet static
+      alias uplink to AT&T
+      address   192.168.8.1
+      netmask   255.255.255.252
+      link-speed 1000
+      link-duplex full
+
+
+Portchannel_ Interface (YAML).
+
+    portchannel_interfaces:
+      - portchannel: 1
+        description: Downlink to n0-access-a, swp49
+        interface: swp1
+        clag_id: 1
+
+      - portchannel: 2
+        description: Downlink to n0-access-b, swp50
+        interface: swp2
+        clag_id: 2
+
+      - portchannel: 3
+        interface: swp7-8
+        description: cross-link to n0-dist-c
+        mlag_crosslink: true
+        clagd_backup_ip: 172.28.17.3
+
+Portchannel_ Interface (Output).
+
+    auto swp1
+    iface swp1
+      alias Downlink to n0-access-a, swp49
+
+    auto bond1
+    iface bond1
+       bond-slaves swp1
+       bond-mode 802.3ad
+       bond-miimon 100
+       bond-use-carrier 1
+       bond-xmit-hash-policy layer3+4
+       bond-lacp-rate 1
+       bond-min-links 1
+       clag-id 1
+       clagd-priority 1024
+
+    auto swp2
+    iface swp2
+      alias Downlink to n0-access-b, swp50
+
+    auto bond2
+    iface bond2
+       bond-slaves swp2
+       bond-mode 802.3ad
+       bond-miimon 100
+       bond-use-carrier 1
+       bond-xmit-hash-policy layer3+4
+       bond-lacp-rate 1
+       bond-min-links 1
+       clag-id 2
+       clagd-priority 1024
+
+    auto swp7
+    iface swp7
+      alias cross-link to n0-dist-c
+
+    auto swp8
+    iface swp8
+      alias cross-link to n0-dist-c
+
+    auto bond3
+    iface bond3
+       bond-slaves swp7 swp8
+       bond-mode 802.3ad
+       bond-miimon 100
+       bond-use-carrier 1
+       bond-xmit-hash-policy layer3+4
+       bond-lacp-rate 1
+       bond-min-links 1
 
 Quagga - Router (YAML)
 
