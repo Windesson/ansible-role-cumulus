@@ -1,5 +1,5 @@
 # Cumulus OS - Intent Based Configurator
-This PlayBook will automatically configure the LINUX Interface and Quagga file based on the YAML variables.
+This PlayBook will automatically configure the LINUX Interface and Quagga files based on the YAML variables.
 
 To run it: 
 ------------
